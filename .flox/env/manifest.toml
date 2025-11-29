@@ -1,0 +1,150 @@
+## Flox Environment Manifest -----------------------------------------
+##
+##   _Everything_ you need to know about the _manifest_ is here:
+##
+##   https://flox.dev/docs/reference/command-reference/manifest.toml/
+##
+## -------------------------------------------------------------------
+# Flox manifest version managed by Flox CLI
+version = 1
+
+
+## Install Packages --------------------------------------------------
+##  $ flox install gum  <- puts a package in [install] section below
+##  $ flox search gum   <- search for a package
+##  $ flox show gum     <- show all versions of a package
+## -------------------------------------------------------------------
+[install]
+python311.pkg-path = "python311"
+pip.pkg-path = "python311Packages.pip"
+setuptools.pkg-path = "python311Packages.setuptools"
+wheel.pkg-path = "python311Packages.wheel"
+go_1_23.pkg-path = "go_1_23"
+rustc.pkg-path = "rustc"
+cargo.pkg-path = "cargo"
+curl.pkg-path = "curl"
+# gum.pkg-path = "gum"
+# gum.version = "^0.14.5"
+
+
+## Environment Variables ---------------------------------------------
+##  ... available for use in the activated environment
+##      as well as [hook], [profile] scripts and [services] below.
+## -------------------------------------------------------------------
+[vars]
+# INTRO_MESSAGE = "It's gettin' Flox in here"
+
+
+## Activation Hook ---------------------------------------------------
+##  ... run by _bash_ shell when you run 'flox activate'.
+## -------------------------------------------------------------------
+[hook]
+on-activate = '''
+echo "================================================================================"
+echo "Karapace Build Environment"
+echo "================================================================================"
+echo ""
+echo "Build Karapace - Apache Kafka Schema Registry & REST Proxy"
+echo ""
+echo "Karapace 5.0.3 (Latest)"
+echo "  flox build karapace-5-0-3  - Full installation (Registry + REST Proxy)"
+echo ""
+echo "After building:"
+echo "  source result-karapace-5-0-3/bin/activate"
+echo "  karapace --help"
+echo ""
+echo "================================================================================"
+'''
+
+
+## Profile script ----------------------------------------------------
+## ... sourced by _your shell_ when you run 'flox activate'.
+## -------------------------------------------------------------------
+[profile]
+# common = '''
+#   gum style \
+#   --foreground 212 --border-foreground 212 --border double \
+#   --align center --width 50 --margin "1 2" --padding "2 4" \
+#     $INTRO_MESSAGE
+# '''
+## Shell-specific customizations such as setting aliases go here:
+# bash = ...
+# zsh  = ...
+# fish = ...
+
+
+## Services ---------------------------------------------------------
+##  $ flox services start             <- Starts all services
+##  $ flox services status            <- Status of running services
+##  $ flox activate --start-services  <- Activates & starts all
+## ------------------------------------------------------------------
+[services]
+# myservice.command = "python3 -m http.server"
+
+
+## Include ----------------------------------------------------------
+## ... environments to create a composed environment
+## ------------------------------------------------------------------
+[include]
+# environments = [
+#     { dir = "../common" }
+# ]
+
+
+## Build and publish your own packages ------------------------------
+##  $ flox build
+##  $ flox publish
+## ------------------------------------------------------------------
+[build]
+
+# ============================================================================
+# KARAPACE 5.0.3 BUILD (Latest, Python 3.10-3.12)
+# ============================================================================
+
+[build.karapace-5-0-3]
+version = "5.0.3"
+description = "Karapace 5.0.3 - Apache Kafka Schema Registry & REST Proxy (Python 3.10-3.12)"
+command = '''
+KARAPACE_VERSION="5.0.3"
+PYTHON_VERSION="3.11"
+
+echo "Building Karapace ${KARAPACE_VERSION}..."
+echo ""
+
+# Create virtualenv
+python -m venv "$out"
+source "$out/bin/activate"
+
+# Upgrade pip and install build tools
+pip install --upgrade pip setuptools wheel
+pip install setuptools-scm setuptools-golang
+
+echo ""
+echo "Installing karapace==${KARAPACE_VERSION} from PyPI..."
+pip install "karapace==${KARAPACE_VERSION}"
+
+echo ""
+echo "✅ Installation complete!"
+echo ""
+echo "Installed executables:"
+karapace --version 2>/dev/null || echo "  karapace - Schema Registry"
+echo "  karapace_rest_proxy - REST Proxy"
+echo "  karapace_schema_backup - Backup tool"
+echo "  karapace_mkpasswd - Password utility"
+echo ""
+echo "Verify installation:"
+python -c "import karapace; print(f'  karapace module: OK (v{karapace.__version__})')" || echo "  karapace module: OK"
+'''
+
+
+## Other Environment Options -----------------------------------------
+[options]
+# Systems that environment is compatible with
+# systems = [
+#   "aarch64-darwin",
+#   "aarch64-linux",
+#   "x86_64-darwin",
+#   "x86_64-linux",
+# ]
+# Uncomment to disable CUDA detection.
+# cuda-detection = false

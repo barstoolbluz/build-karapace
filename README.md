@@ -1,0 +1,162 @@
+# Karapace - Nix/Flox Build Environment
+
+Build modern Karapace versions using **Nix** and **Flox** - Apache Kafka® Schema Registry and REST Proxy implementation.
+
+## Why This Exists
+
+**Problem:** Need a modern, open-source alternative to Confluent Schema Registry for Kafka
+- Karapace provides drop-in replacement for Schema Registry and Kafka REST Proxy
+- Compatible with Schema Registry 6.1.1 API
+- Supports Avro, JSON Schema, and Protobuf
+- Leader/Replica architecture for high availability
+
+**Solution:** This repository provides build tooling to package Karapace using:
+- **[Flox Manifest Builds](https://flox.dev/docs/concepts/manifest-builds/)** - Declarative TOML-based builds
+- **Nix Expressions** - For reproducible builds and Nix ecosystem integration
+
+## Supported Versions
+
+| Version | Released | Python | Features | Use Case |
+|---------|----------|--------|----------|----------|
+| **5.0.3** | Nov 2024 | 3.10-3.12 | Schema Registry + REST Proxy | Production ⭐ |
+
+## Quick Start
+
+### Option 1: Flox Manifest Builds (Recommended)
+
+```bash
+# Clone this repository
+git clone <your-repo-url>
+cd build-karapace
+
+# Activate the build environment
+flox activate
+
+# Build Karapace 5.0.3
+flox build karapace-5-0-3
+
+# Use the built package
+./result-karapace-5-0-3/bin/karapace --version
+source result-karapace-5-0-3/bin/activate
+karapace --help
+```
+
+**Available builds:**
+- `karapace-5-0-3` - Full Karapace installation (Schema Registry + REST Proxy)
+
+### Option 2: Nix Expression (Planned)
+
+Traditional `nix-build` support planned for broader Nix community compatibility.
+
+## How It Works
+
+All build methods:
+
+1. **Create a Python virtualenv** in the output directory
+2. **Install build dependencies** (setuptools, setuptools-scm, setuptools-golang)
+3. **Build Go extensions** for Protobuf support
+4. **Install Karapace via pip** from PyPI
+5. **Package as Nix store path** or symlink
+
+This approach:
+- ✅ Uses official PyPI releases
+- ✅ Includes Protobuf/Go extension support
+- ✅ Provides Schema Registry and REST Proxy
+- ✅ Supports Avro, JSON Schema, Protobuf
+- ✅ Enables version tracking and updates
+
+## Use Cases
+
+### Development Environments
+
+```bash
+flox activate
+flox build karapace-5-0-3
+source result-karapace-5-0-3/bin/activate
+
+# Start Schema Registry
+karapace karapace.config.json
+
+# Start REST Proxy
+karapace_rest_proxy rest-proxy.config.json
+```
+
+### Production Deployments
+
+Compose with Flox environments for Kafka/Zookeeper:
+
+```toml
+[include]
+environments = [
+  { remote = "team/kafka-cluster" },
+]
+
+[hook]
+on-activate = '''
+  source /path/to/result-karapace-5-0-3/bin/activate
+  export KARAPACE_BOOTSTRAP_URI="kafka:9092"
+'''
+
+[services]
+karapace-registry.command = "karapace karapace.config.json"
+karapace-rest.command = "karapace_rest_proxy rest-proxy.config.json"
+```
+
+## Configuration
+
+Karapace requires configuration files. Example minimal config:
+
+**karapace.config.json:**
+```json
+{
+  "bootstrap_uri": "kafka:9092",
+  "registry_host": "0.0.0.0",
+  "registry_port": 8081,
+  "topic_name": "_schemas"
+}
+```
+
+**rest-proxy.config.json:**
+```json
+{
+  "bootstrap_uri": "kafka:9092",
+  "rest_host": "0.0.0.0",
+  "rest_port": 8082
+}
+```
+
+Environment variables can override config with `KARAPACE_` prefix:
+- `KARAPACE_BOOTSTRAP_URI` overrides `bootstrap_uri`
+- `KARAPACE_REGISTRY_PORT` overrides `registry_port`
+
+## About Karapace
+
+[Karapace](https://karapace.io) is an open-source implementation of Apache Kafka REST and Schema Registry.
+
+### Key Features
+
+- **Schema Registry**: Central repository for schemas (Avro, JSON Schema, Protobuf)
+- **Kafka REST Proxy**: RESTful interface for Kafka operations
+- **Compatibility**: Drop-in replacement for Confluent Schema Registry 6.1.1
+- **HA Support**: Leader/Replica architecture
+- **Observability**: Metrics and OpenTelemetry support
+- **Authentication**: OAuth2 support
+
+### Links
+
+- **Official Repository**: https://github.com/Aiven-Open/karapace
+- **Official Website**: https://karapace.io
+- **PyPI Package**: https://pypi.org/project/karapace/
+- **Docker Images**: ghcr.io/aiven-open/karapace
+
+## License
+
+Karapace is licensed under the Apache License 2.0.
+
+This build environment configuration is provided as-is for building Karapace.
+
+## Acknowledgments
+
+- **Aiven** for creating and maintaining Karapace
+- **Flox** for declarative environment and build system
+- **Nix Community** for reproducible build infrastructure

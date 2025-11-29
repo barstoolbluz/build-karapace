@@ -1,0 +1,10 @@
+result*
+.flox/cache/
+*.pyc
+__pycache__/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/

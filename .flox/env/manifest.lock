@@ -1,0 +1,1085 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "version": 1,
+    "install": {
+      "cargo": {
+        "pkg-path": "cargo"
+      },
+      "curl": {
+        "pkg-path": "curl"
+      },
+      "go_1_23": {
+        "pkg-path": "go_1_23"
+      },
+      "pip": {
+        "pkg-path": "python311Packages.pip"
+      },
+      "python311": {
+        "pkg-path": "python311"
+      },
+      "rustc": {
+        "pkg-path": "rustc"
+      },
+      "setuptools": {
+        "pkg-path": "python311Packages.setuptools"
+      },
+      "wheel": {
+        "pkg-path": "python311Packages.wheel"
+      }
+    },
+    "hook": {},
+    "profile": {},
+    "options": {}
+  },
+  "packages": [
+    {
+      "attr_path": "cargo",
+      "broken": false,
+      "derivation": "/nix/store/0ji3v0ci5459mxf399xpnf5alilqc0y2-cargo-1.82.0.drv",
+      "description": "Downloads your Rust project's dependencies and builds your project",
+      "install_id": "cargo",
+      "license": "[ MIT, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "cargo-1.82.0",
+      "pname": "cargo",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.82.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/myr2v1d9qkczn9yizysw70g24bi7qi5h-cargo-1.82.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "cargo",
+      "broken": false,
+      "derivation": "/nix/store/5akrw0y75m4b6cgjv1p577cnckj22hmv-cargo-1.82.0.drv",
+      "description": "Downloads your Rust project's dependencies and builds your project",
+      "install_id": "cargo",
+      "license": "[ MIT, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "cargo-1.82.0",
+      "pname": "cargo",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.82.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/3k5jd0aq55r4cysfz9j5g019lvmzbf6q-cargo-1.82.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "cargo",
+      "broken": false,
+      "derivation": "/nix/store/m8mhv44zlarwhlafs3c8c1lh96lvc7ji-cargo-1.82.0.drv",
+      "description": "Downloads your Rust project's dependencies and builds your project",
+      "install_id": "cargo",
+      "license": "[ MIT, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "cargo-1.82.0",
+      "pname": "cargo",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.82.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/66hc9235hq1r6xcspjkc05nkan2m7k8y-cargo-1.82.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "cargo",
+      "broken": false,
+      "derivation": "/nix/store/wsfxn2fv4ds8sijan3a0bgafzzy5i9xi-cargo-1.82.0.drv",
+      "description": "Downloads your Rust project's dependencies and builds your project",
+      "install_id": "cargo",
+      "license": "[ MIT, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "cargo-1.82.0",
+      "pname": "cargo",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.82.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/9113334r56fmi13i8j6k8r2x92ml3c6b-cargo-1.82.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "curl",
+      "broken": false,
+      "derivation": "/nix/store/v9vmd04cz98k70jj09y5zwxrq8vmrc8c-curl-8.11.0.drv",
+      "description": "Command line tool for transferring files with URL syntax",
+      "install_id": "curl",
+      "license": "curl",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "curl-8.11.0",
+      "pname": "curl",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.11.0",
+      "outputs_to_install": [
+        "bin",
+        "man"
+      ],
+      "outputs": {
+        "bin": "/nix/store/78b40bakdk6ldzd2cnzqqc6k2ffq6q80-curl-8.11.0-bin",
+        "dev": "/nix/store/x8qcqapnc2656j9pmhycqw5gjsg8wj95-curl-8.11.0-dev",
+        "devdoc": "/nix/store/3jkma0k7qwx82djlzac798hnhky6s2mw-curl-8.11.0-devdoc",
+        "man": "/nix/store/p28ziicmg9c8y0j7zlhfab3cz2jl84jq-curl-8.11.0-man",
+        "out": "/nix/store/j39kv1qva1ndbbfc6b7rqipz5fs9pnvc-curl-8.11.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "curl",
+      "broken": false,
+      "derivation": "/nix/store/mnsvz2a73bfq67yx4fmh2y983xv585am-curl-8.11.0.drv",
+      "description": "Command line tool for transferring files with URL syntax",
+      "install_id": "curl",
+      "license": "curl",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "curl-8.11.0",
+      "pname": "curl",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.11.0",
+      "outputs_to_install": [
+        "bin",
+        "man"
+      ],
+      "outputs": {
+        "bin": "/nix/store/wq37ah6ayglskxv1viw204j246miz9mw-curl-8.11.0-bin",
+        "debug": "/nix/store/hz05x0jdczalgjxivm8m1ni56hamkrh1-curl-8.11.0-debug",
+        "dev": "/nix/store/8q0a3mgciq1alhn51ga7pcj491w42frm-curl-8.11.0-dev",
+        "devdoc": "/nix/store/081g6dj7mniw7fjzn5byf9vpzk36yg4h-curl-8.11.0-devdoc",
+        "man": "/nix/store/b8rfm1q2rakp4nml9l61s45v3pg2iah4-curl-8.11.0-man",
+        "out": "/nix/store/fqwkalsvg898sgf969bqpaz4blypx5gd-curl-8.11.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "curl",
+      "broken": false,
+      "derivation": "/nix/store/dadfccb1pnppc3bggh1ki6p1n93y7iqx-curl-8.11.0.drv",
+      "description": "Command line tool for transferring files with URL syntax",
+      "install_id": "curl",
+      "license": "curl",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "curl-8.11.0",
+      "pname": "curl",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.11.0",
+      "outputs_to_install": [
+        "bin",
+        "man"
+      ],
+      "outputs": {
+        "bin": "/nix/store/d9hsgziq68q5qaasrm8rcmvvk7idry85-curl-8.11.0-bin",
+        "dev": "/nix/store/5vkqd75k1d4wk6dsgdzxsfv9p692abia-curl-8.11.0-dev",
+        "devdoc": "/nix/store/br90i57yq5fnqz9kc52lg0d8cpz5xkvi-curl-8.11.0-devdoc",
+        "man": "/nix/store/pri71vk0srs4174n79v3rrsasi0cfcl7-curl-8.11.0-man",
+        "out": "/nix/store/ppzjbkfncrrxmiyh5h32pdn4lk8bi4ba-curl-8.11.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "curl",
+      "broken": false,
+      "derivation": "/nix/store/adf5kj0d65xylbk18dbqpx99s7mzlrv8-curl-8.11.0.drv",
+      "description": "Command line tool for transferring files with URL syntax",
+      "install_id": "curl",
+      "license": "curl",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "curl-8.11.0",
+      "pname": "curl",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "8.11.0",
+      "outputs_to_install": [
+        "bin",
+        "man"
+      ],
+      "outputs": {
+        "bin": "/nix/store/r686j19q8zcnccpg5h9xlf7bvvs27b8s-curl-8.11.0-bin",
+        "debug": "/nix/store/j4l8vnw7cqpiw68mf0gxaqx98hw5fcpb-curl-8.11.0-debug",
+        "dev": "/nix/store/h269afcqsqykvbsnhrbpw9lghaff47dz-curl-8.11.0-dev",
+        "devdoc": "/nix/store/8xcjvalpnmcn6c6af3rhshl0ahnxw9dl-curl-8.11.0-devdoc",
+        "man": "/nix/store/rlls2vbms86vcrf7z2savrh0x0gbbk8h-curl-8.11.0-man",
+        "out": "/nix/store/ixq7chmml361204anwph16ll2njcf19d-curl-8.11.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "go_1_23",
+      "broken": false,
+      "derivation": "/nix/store/56rv2z6sv5b1vzica5xpszjqvd21gqr7-go-1.23.3.drv",
+      "description": "Go Programming language",
+      "install_id": "go_1_23",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "go-1.23.3",
+      "pname": "go_1_23",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.23.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/w5cxqj1wmbl3wp6arpyl90g66hjs0823-go-1.23.3"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "go_1_23",
+      "broken": false,
+      "derivation": "/nix/store/7z5w6l4z1am909fazspdizhd8hjcrldd-go-1.23.3.drv",
+      "description": "Go Programming language",
+      "install_id": "go_1_23",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "go-1.23.3",
+      "pname": "go_1_23",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.23.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/09zl6c5i31x18w55qskc0kbp32arvvlr-go-1.23.3"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "go_1_23",
+      "broken": false,
+      "derivation": "/nix/store/bg18qs459wx00nfwwapdxq5xvvv4sdyh-go-1.23.3.drv",
+      "description": "Go Programming language",
+      "install_id": "go_1_23",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "go-1.23.3",
+      "pname": "go_1_23",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.23.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/alkrwr7w62qp3160q0azcvnyn0184hw3-go-1.23.3"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "go_1_23",
+      "broken": false,
+      "derivation": "/nix/store/k427v9wgcg9ify27mcqxrkpw5fd16xmg-go-1.23.3.drv",
+      "description": "Go Programming language",
+      "install_id": "go_1_23",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "go-1.23.3",
+      "pname": "go_1_23",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.23.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/zhq8dnjbhwspzdglyq28j74axvqyk86q-go-1.23.3"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311Packages.pip",
+      "broken": false,
+      "derivation": "/nix/store/gx3cp6lqdijxky0hgcpzs0nkc0n2i0pm-python3.11-pip-24.0.drv",
+      "description": "PyPA recommended tool for installing Python packages",
+      "install_id": "pip",
+      "license": "[ MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3.11-pip-24.0",
+      "pname": "pip",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "24.0",
+      "outputs_to_install": [
+        "man",
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/qym844p07sk31c62yqj5b980rn9zjqp8-python3.11-pip-24.0-dist",
+        "man": "/nix/store/8c0k3zmqxmc790jnq0iy741f0r59skq0-python3.11-pip-24.0-man",
+        "out": "/nix/store/4rlmzs8imw8cnm7zxmb40qcg5zfilywm-python3.11-pip-24.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311Packages.pip",
+      "broken": false,
+      "derivation": "/nix/store/pyk770l29hhkpag7p2vww40gyq51lx0j-python3.11-pip-24.0.drv",
+      "description": "PyPA recommended tool for installing Python packages",
+      "install_id": "pip",
+      "license": "[ MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3.11-pip-24.0",
+      "pname": "pip",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "24.0",
+      "outputs_to_install": [
+        "man",
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/9ai3zc1ml1hpl6r5a0wz20j73jzqc19k-python3.11-pip-24.0-dist",
+        "man": "/nix/store/l6h3wn620pnsw00b3izh7qkh63v2h2mm-python3.11-pip-24.0-man",
+        "out": "/nix/store/n1878qvhhl7a1238h52syhpyn3vpr9ap-python3.11-pip-24.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311Packages.pip",
+      "broken": false,
+      "derivation": "/nix/store/m78wbwhxyj4shwrbpdkjfd14bnsscq1m-python3.11-pip-24.0.drv",
+      "description": "PyPA recommended tool for installing Python packages",
+      "install_id": "pip",
+      "license": "[ MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3.11-pip-24.0",
+      "pname": "pip",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "24.0",
+      "outputs_to_install": [
+        "man",
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/543xg541cyv8azjfr0d4iy1r56bzr7l0-python3.11-pip-24.0-dist",
+        "man": "/nix/store/v0m892bw1za9c84sdz7id7lsdqz5gn0m-python3.11-pip-24.0-man",
+        "out": "/nix/store/b4rc80klr5hfjnndmxmzkr2h1ipsc0lw-python3.11-pip-24.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311Packages.pip",
+      "broken": false,
+      "derivation": "/nix/store/14llrjh9jq8kfdj4mkgibp4gzprxrrcr-python3.11-pip-24.0.drv",
+      "description": "PyPA recommended tool for installing Python packages",
+      "install_id": "pip",
+      "license": "[ MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3.11-pip-24.0",
+      "pname": "pip",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "24.0",
+      "outputs_to_install": [
+        "man",
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/ifs6g0gvihqkn6kbs91n88hxai1i3jcj-python3.11-pip-24.0-dist",
+        "man": "/nix/store/5qlaabn7jli0d2djawr8ld8l6bi8jwwi-python3.11-pip-24.0-man",
+        "out": "/nix/store/9hhh5rh3qihyrh0y0wid9xl20i0z5pfq-python3.11-pip-24.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311",
+      "broken": false,
+      "derivation": "/nix/store/4npqfdp8xqn9jrsrw9apyyh50g1snjml-python3-3.11.10.drv",
+      "description": "High-level dynamically-typed programming language",
+      "install_id": "python311",
+      "license": "Python-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3-3.11.10",
+      "pname": "python311",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "python3-3.11.10",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/vmlgjfqdflax5f2y5r0952fspjzd7npw-python3-3.11.10"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311",
+      "broken": false,
+      "derivation": "/nix/store/c6kbjl5n4w38kx22shs776zg6smryx4s-python3-3.11.10.drv",
+      "description": "High-level dynamically-typed programming language",
+      "install_id": "python311",
+      "license": "Python-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3-3.11.10",
+      "pname": "python311",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "python3-3.11.10",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/q6kq2z7l096v83i04s3klb8cpijkdc79-python3-3.11.10-debug",
+        "out": "/nix/store/hkfpyjwr9kkq3jljxv62drqfi2vndjqb-python3-3.11.10"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311",
+      "broken": false,
+      "derivation": "/nix/store/r01mfm02ppb5j1jm4kd07xa25ahaw5as-python3-3.11.10.drv",
+      "description": "High-level dynamically-typed programming language",
+      "install_id": "python311",
+      "license": "Python-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3-3.11.10",
+      "pname": "python311",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "python3-3.11.10",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/6hh041131z6hvk88nirx4rjmi6879sjc-python3-3.11.10"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311",
+      "broken": false,
+      "derivation": "/nix/store/mkvssckwgmrfv2wzlm8ym69rm1z4x8cr-python3-3.11.10.drv",
+      "description": "High-level dynamically-typed programming language",
+      "install_id": "python311",
+      "license": "Python-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3-3.11.10",
+      "pname": "python311",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "python3-3.11.10",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/jcnym3cicgb2h5dlypy5maaipjmmazw3-python3-3.11.10-debug",
+        "out": "/nix/store/nmqxyr00in2arwrq5qd1qipsanz1yrn5-python3-3.11.10"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "rustc",
+      "broken": false,
+      "derivation": "/nix/store/fzacva3pvni7k5sv8xy7zg117i8gv755-rustc-wrapper-1.82.0.drv",
+      "description": "Safe, concurrent, practical language (wrapper script)",
+      "install_id": "rustc",
+      "license": "[ MIT, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "rustc-wrapper-1.82.0",
+      "pname": "rustc",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.82.0",
+      "outputs_to_install": [
+        "man",
+        "out"
+      ],
+      "outputs": {
+        "doc": "/nix/store/9vl4spg02ifr19lrkfqw8xb1l2g0h07n-rustc-wrapper-1.82.0-doc",
+        "man": "/nix/store/4jn6cd8vmw38rd5in0ibbxfprzcx1nlb-rustc-wrapper-1.82.0-man",
+        "out": "/nix/store/rmbxychjdppq2pm0z9q09iw2mgsakhdi-rustc-wrapper-1.82.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "rustc",
+      "broken": false,
+      "derivation": "/nix/store/mxya33yiwmzi6vi8yr4nljv6mm27nhl7-rustc-wrapper-1.82.0.drv",
+      "description": "Safe, concurrent, practical language (wrapper script)",
+      "install_id": "rustc",
+      "license": "[ MIT, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "rustc-wrapper-1.82.0",
+      "pname": "rustc",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.82.0",
+      "outputs_to_install": [
+        "man",
+        "out"
+      ],
+      "outputs": {
+        "doc": "/nix/store/0nz2527i079jbwa5dk2yrj5cs47sbydl-rustc-wrapper-1.82.0-doc",
+        "man": "/nix/store/wjk1xyd8rhv4f46bpj9ih5b906pf5dkp-rustc-wrapper-1.82.0-man",
+        "out": "/nix/store/07m4afn16ni3dkl8r65ycjpcri8kwr7c-rustc-wrapper-1.82.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "rustc",
+      "broken": false,
+      "derivation": "/nix/store/qv57axk8qsdzfdiwiiazzwmrn19si56y-rustc-wrapper-1.82.0.drv",
+      "description": "Safe, concurrent, practical language (wrapper script)",
+      "install_id": "rustc",
+      "license": "[ MIT, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "rustc-wrapper-1.82.0",
+      "pname": "rustc",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.82.0",
+      "outputs_to_install": [
+        "man",
+        "out"
+      ],
+      "outputs": {
+        "doc": "/nix/store/r071i9gzx3gg1ia6vdl8rcf1ypg88ykn-rustc-wrapper-1.82.0-doc",
+        "man": "/nix/store/mw3rl8838f78bqpblw03qkv94dc51wg1-rustc-wrapper-1.82.0-man",
+        "out": "/nix/store/fgdf3861f0dmzxhijvm9kpvzsjdbzzzc-rustc-wrapper-1.82.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "rustc",
+      "broken": false,
+      "derivation": "/nix/store/0wrycnl5l3nlpg4fyx86x0x8kzwaj6zd-rustc-wrapper-1.82.0.drv",
+      "description": "Safe, concurrent, practical language (wrapper script)",
+      "install_id": "rustc",
+      "license": "[ MIT, Apache-2.0 ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "rustc-wrapper-1.82.0",
+      "pname": "rustc",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.82.0",
+      "outputs_to_install": [
+        "man",
+        "out"
+      ],
+      "outputs": {
+        "doc": "/nix/store/8ifmhvyz946xfpwsgp7rgfhm23c3mi84-rustc-wrapper-1.82.0-doc",
+        "man": "/nix/store/hl5h9x0x1i4vgzr4phbdk1s29hav8z75-rustc-wrapper-1.82.0-man",
+        "out": "/nix/store/rkj4nka0cyjnap3l6x2xbgv48fwm2yq1-rustc-wrapper-1.82.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311Packages.setuptools",
+      "broken": false,
+      "derivation": "/nix/store/818kdj218a9a728cw4jbl528fb8xqrjx-python3.11-setuptools-75.1.1.drv",
+      "description": "Utilities to facilitate the installation of Python packages",
+      "install_id": "setuptools",
+      "license": "[ MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3.11-setuptools-75.1.1",
+      "pname": "setuptools",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "75.1.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/hbv7ddrrvs0l4fb57y3jdq0jc7bwfazf-python3.11-setuptools-75.1.1-dist",
+        "out": "/nix/store/v6c9my3jxyivqvxcm09x2gb59avk3ziv-python3.11-setuptools-75.1.1"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311Packages.setuptools",
+      "broken": false,
+      "derivation": "/nix/store/qy6315x4xxpzgirss2qka83h47i42w1s-python3.11-setuptools-75.1.1.drv",
+      "description": "Utilities to facilitate the installation of Python packages",
+      "install_id": "setuptools",
+      "license": "[ MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3.11-setuptools-75.1.1",
+      "pname": "setuptools",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "75.1.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/5frn9q7yyn8vl1nfi9hcmvnn2xdq88p2-python3.11-setuptools-75.1.1-dist",
+        "out": "/nix/store/pj99v5v37xxp359dr85ygv02r8b452hk-python3.11-setuptools-75.1.1"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311Packages.setuptools",
+      "broken": false,
+      "derivation": "/nix/store/dqwfsxna129ysva07nwzlyj0s8r2mj0j-python3.11-setuptools-75.1.1.drv",
+      "description": "Utilities to facilitate the installation of Python packages",
+      "install_id": "setuptools",
+      "license": "[ MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3.11-setuptools-75.1.1",
+      "pname": "setuptools",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "75.1.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/wn4s3mp8bnx26ygfr1rc8hwclnq3jk8s-python3.11-setuptools-75.1.1-dist",
+        "out": "/nix/store/20xlsi00kph28w73ccmywrn3zr3rx9mm-python3.11-setuptools-75.1.1"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311Packages.setuptools",
+      "broken": false,
+      "derivation": "/nix/store/z6sgxsl4yz3kilw8pq6z15q3cyjrcxhj-python3.11-setuptools-75.1.1.drv",
+      "description": "Utilities to facilitate the installation of Python packages",
+      "install_id": "setuptools",
+      "license": "[ MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3.11-setuptools-75.1.1",
+      "pname": "setuptools",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "75.1.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/q51qb4ihjvxyj47mfpr2j3shyj7hs7d2-python3.11-setuptools-75.1.1-dist",
+        "out": "/nix/store/wblvmd5y7izx0z10d1w7ga7zc4apjxmb-python3.11-setuptools-75.1.1"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311Packages.wheel",
+      "broken": false,
+      "derivation": "/nix/store/sp5gdip0kz8499jq44b581h6npl8ky6i-python3.11-wheel-0.44.0.drv",
+      "description": "Built-package format for Python",
+      "install_id": "wheel",
+      "license": "[ MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3.11-wheel-0.44.0",
+      "pname": "wheel",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "0.44.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/jc302mnb7934av2nlk3v4c5q16332yn4-python3.11-wheel-0.44.0-dist",
+        "out": "/nix/store/ib9qb414f725mx0c77n883zg14xc7q72-python3.11-wheel-0.44.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311Packages.wheel",
+      "broken": false,
+      "derivation": "/nix/store/nz0wag5rvyjgb0vl3aakmpp29sv2l6zr-python3.11-wheel-0.44.0.drv",
+      "description": "Built-package format for Python",
+      "install_id": "wheel",
+      "license": "[ MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3.11-wheel-0.44.0",
+      "pname": "wheel",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "0.44.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/lkhag6h2l2i1avd2hq2a7ag35qam70qa-python3.11-wheel-0.44.0-dist",
+        "out": "/nix/store/i4zl239arg2ygw4lyi6lirwmi5gzqzky-python3.11-wheel-0.44.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311Packages.wheel",
+      "broken": false,
+      "derivation": "/nix/store/v3c8la5mgvi05aqmq6xkkp0lkdnsbfi8-python3.11-wheel-0.44.0.drv",
+      "description": "Built-package format for Python",
+      "install_id": "wheel",
+      "license": "[ MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3.11-wheel-0.44.0",
+      "pname": "wheel",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "0.44.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/cbghhjpgh3hb38hra5h03nik2gfdyfmw-python3.11-wheel-0.44.0-dist",
+        "out": "/nix/store/m3l21bav609h6cmlc4h9wjzpg45r89i0-python3.11-wheel-0.44.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311Packages.wheel",
+      "broken": false,
+      "derivation": "/nix/store/a0gy6si68m8qnw0lw402ywb2i5hxw1wp-python3.11-wheel-0.44.0.drv",
+      "description": "Built-package format for Python",
+      "install_id": "wheel",
+      "license": "[ MIT ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "name": "python3.11-wheel-0.44.0",
+      "pname": "wheel",
+      "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+      "rev_count": 724962,
+      "rev_date": "2024-12-19T23:01:11Z",
+      "scrape_date": "2024-12-23T03:54:12Z",
+      "stabilities": [
+        "stable",
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "0.44.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/vb0d99f5qa71scn9sxfl3vqm888q9cpd-python3.11-wheel-0.44.0-dist",
+        "out": "/nix/store/haf9iq24k96g5l9914gkckq7nj63x1m7-python3.11-wheel-0.44.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    }
+  ]
+}
