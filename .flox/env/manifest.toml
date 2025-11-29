@@ -94,47 +94,12 @@ echo "==========================================================================
 ## Build and publish your own packages ------------------------------
 ##  $ flox build
 ##  $ flox publish
+##
+## Nix expression builds defined in .flox/pkgs/
 ## ------------------------------------------------------------------
 [build]
-
-# ============================================================================
-# KARAPACE 5.0.3 BUILD (Latest, Python 3.10-3.12)
-# ============================================================================
-
-[build.karapace-5-0-3]
-version = "5.0.3"
-description = "Karapace 5.0.3 - Apache Kafka Schema Registry & REST Proxy (Python 3.10-3.12)"
-command = '''
-KARAPACE_VERSION="5.0.3"
-PYTHON_VERSION="3.11"
-
-echo "Building Karapace ${KARAPACE_VERSION}..."
-echo ""
-
-# Create virtualenv
-python -m venv "$out"
-source "$out/bin/activate"
-
-# Upgrade pip and install build tools
-pip install --upgrade pip setuptools wheel
-pip install setuptools-scm setuptools-golang
-
-echo ""
-echo "Installing karapace==${KARAPACE_VERSION} from PyPI..."
-pip install "karapace==${KARAPACE_VERSION}"
-
-echo ""
-echo "✅ Installation complete!"
-echo ""
-echo "Installed executables:"
-karapace --version 2>/dev/null || echo "  karapace - Schema Registry"
-echo "  karapace_rest_proxy - REST Proxy"
-echo "  karapace_schema_backup - Backup tool"
-echo "  karapace_mkpasswd - Password utility"
-echo ""
-echo "Verify installation:"
-python -c "import karapace; print(f'  karapace module: OK (v{karapace.__version__})')" || echo "  karapace module: OK"
-'''
+# Nix expressions in .flox/pkgs/ automatically available:
+#   karapace-5-0-3.nix
 
 
 ## Other Environment Options -----------------------------------------
