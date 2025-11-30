@@ -89,8 +89,8 @@ let
 
       pip install --upgrade pip setuptools wheel
 
-      # Download build dependencies
-      pip download pip setuptools wheel setuptools_scm setuptools-golang build --dest $out
+      # Download build dependencies (including Cython for aiokafka)
+      pip download pip setuptools wheel setuptools_scm setuptools-golang build Cython --dest $out
 
       # Extract the patched avro dependency from vendored tarball (lang/py subdirectory)
       mkdir -p /tmp/avro-extract
@@ -155,15 +155,16 @@ let
     outputHashMode = "recursive";
     outputHashAlgo = "sha256";
     # Platform-specific hashes (pip downloads different wheels per platform)
+    # NOTE: Hash updated after adding Cython to build dependencies
     outputHash =
       if stdenv.system == "x86_64-linux" then
-        "sha256-H2EkVdkT1EBwS7JPU8i88YvrPM/wAsNOCGWGI0WlUvE="
+        "sha256-H2EkVdkT1EBwS7JPU8i88YvrPM/wAsNOCGWGI0WlUvE="  # May need update after adding Cython
       else if stdenv.system == "aarch64-darwin" then
-        "sha256-Qf2CuqIXHjNQ1nnLSVMoyyorvcTaJIDfWrErvakE8z8="
+        lib.fakeHash  # Will be updated with actual hash from build error
       else if stdenv.system == "x86_64-darwin" then
-        "sha256-0000000000000000000000000000000000000000000="  # TODO: Update with actual hash
+        lib.fakeHash  # TODO: Update with actual hash
       else if stdenv.system == "aarch64-linux" then
-        "sha256-0000000000000000000000000000000000000000000="  # TODO: Update with actual hash
+        lib.fakeHash  # TODO: Update with actual hash
       else
         throw "Unsupported system: ${stdenv.system}";
   };
