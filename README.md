@@ -52,18 +52,20 @@ Traditional `nix-build` support planned for broader Nix community compatibility.
 
 All build methods:
 
-1. **Create a Python virtualenv** in the output directory
-2. **Install build dependencies** (setuptools, setuptools-scm, setuptools-golang)
-3. **Build Go extensions** for Protobuf support
-4. **Install Karapace via pip** from PyPI
-5. **Package as Nix store path** or symlink
+1. **Use vendored source tarballs** from `vendor/` directory
+2. **Create a Python virtualenv** in the output directory
+3. **Install build dependencies** (setuptools, setuptools-scm, setuptools-golang)
+4. **Build Go extensions** for Protobuf support from vendored Aiven Avro fork
+5. **Install Karapace dependencies** from PyPI (cached in FOD)
+6. **Package as Nix store path** with proper runtime wrappers
 
 This approach:
-- ✅ Uses official PyPI releases
+- ✅ Uses vendored source tarballs for reproducibility
 - ✅ Includes Protobuf/Go extension support
 - ✅ Provides Schema Registry and REST Proxy
 - ✅ Supports Avro, JSON Schema, Protobuf
-- ✅ Enables version tracking and updates
+- ✅ Self-contained - builds without external GitHub dependencies
+- ✅ Enables version tracking and updates via branching strategy
 
 ## Use Cases
 
@@ -101,6 +103,34 @@ on-activate = '''
 karapace-registry.command = "karapace karapace.config.json"
 karapace-rest.command = "karapace_rest_proxy rest-proxy.config.json"
 ```
+
+## Vendored Sources & Version Management
+
+This repository uses a **vendored source** strategy to ensure reproducible builds even if upstream sources disappear.
+
+### Vendored Tarballs
+
+All required source tarballs are stored in `vendor/`:
+- `karapace-5.0.3.tar.gz` - Main Karapace source from GitHub release
+- `avro-5a82d57f2a650fd87c819a30e433f1abb2c76ca2.tar.gz` - Aiven's patched Avro library
+
+Python dependencies from PyPI are cached in a Fixed-Output Derivation (FOD) but not vendored, as PyPI provides stable, long-term package availability.
+
+### Version Management Strategy
+
+**`main` branch** = Latest stable version
+- Contains current version's Nix expression and vendored sources
+- Always builds the most recent stable release
+
+**Version-specific branches** = Frozen historical versions
+- When a new version is released, current `main` is branched to `karapace-X.Y.Z`
+- Each branch preserves its own `vendor/` directory
+- Allows building any historical version forever, even if upstream sources are deleted
+
+Example workflow for releasing 5.0.4:
+1. Branch current `main` to `karapace-5.0.3`
+2. On `main`: Add new tarballs to `vendor/`, create `karapace-5-0-4.nix`
+3. Users can build 5.0.4 from `main` or 5.0.3 from the `karapace-5.0.3` branch
 
 ## Configuration
 

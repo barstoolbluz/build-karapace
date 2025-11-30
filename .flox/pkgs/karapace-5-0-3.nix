@@ -6,6 +6,10 @@
 , go_1_23
 , rustc
 , cargo
+, unzip
+, zip
+, patchelf
+, makeWrapper
 }:
 
 let
@@ -38,25 +42,26 @@ let
     description = "Unknown version";
   };
 
-  # Fetch Karapace source from GitHub
+  # Vendored source tarballs (relative to this .nix file in .flox/pkgs/)
+  vendorDir = ../../vendor;
+
+  # Fetch Karapace source from vendored tarball
   karapaceSrc = stdenv.mkDerivation {
     name = "karapace-${version}-source";
 
-    nativeBuildInputs = [ curl cacert ];
+    # Use vendored tarball instead of downloading from GitHub
+    src = "${vendorDir}/karapace-${version}.tar.gz";
 
-    src = builtins.toFile "download" "";
+    sourceRoot = ".";
 
-    unpackPhase = ":";
-
-    buildPhase = ''
-      mkdir -p $out
-      cd $out
-      curl -L "https://github.com/Aiven-Open/karapace/archive/refs/tags/${version}.tar.gz" -o source.tar.gz
-      tar xzf source.tar.gz --strip-components=1
-      rm source.tar.gz
+    unpackPhase = ''
+      tar xzf $src --strip-components=1
     '';
 
-    installPhase = "true";
+    installPhase = ''
+      mkdir -p $out
+      cp -r . $out/
+    '';
 
     dontPatchShebangs = true;
     dontStrip = true;
@@ -71,7 +76,7 @@ let
   pipCache = stdenv.mkDerivation {
     name = "karapace-${version}-pip-cache";
 
-    nativeBuildInputs = [ pythonPkg curl cacert go_1_23 rustc cargo ];
+    nativeBuildInputs = [ pythonPkg curl cacert go_1_23 rustc cargo unzip zip patchelf ];
 
     src = karapaceSrc;
 
@@ -88,12 +93,11 @@ let
       pip install --upgrade pip setuptools wheel
 
       # Download build dependencies
-      pip download pip setuptools wheel setuptools_scm setuptools-golang --dest $out
+      pip download pip setuptools wheel setuptools_scm setuptools-golang build --dest $out
 
-      # Download and extract the patched avro dependency (lang/py subdirectory)
+      # Extract the patched avro dependency from vendored tarball (lang/py subdirectory)
       mkdir -p /tmp/avro-extract
-      curl -L "https://github.com/aiven/avro/archive/5a82d57f2a650fd87c819a30e433f1abb2c76ca2.tar.gz" | \
-        tar xz -C /tmp/avro-extract
+      tar xzf ${vendorDir}/avro-5a82d57f2a650fd87c819a30e433f1abb2c76ca2.tar.gz -C /tmp/avro-extract
       cd /tmp/avro-extract/avro-5a82d57f2a650fd87c819a30e433f1abb2c76ca2/lang/py
       python setup.py sdist --dist-dir $out
       cd -
@@ -102,17 +106,51 @@ let
       # This downloads wheels and source distributions for all dependencies
       pip download . --dest $out
 
-      # Download Go dependencies for the protopace extension
-      echo "Downloading Go dependencies for protopace..."
+      # Pre-build the protopace Go extension as a wheel
+      echo "Pre-building protopace Go extension..."
       cd go/protopace
+
+      # Set up Go environment
       export GOPATH=/tmp/gopath
       export GOCACHE=/tmp/go-build
       mkdir -p /tmp/gopath /tmp/go-build
+
+      # Download and vendor dependencies
       go mod download
       go mod vendor
-      # Copy vendor directory to output
-      cp -r vendor $out/vendor
-      cd -
+
+      cd ../..
+
+      # Build the karapace wheel with the Go extension
+      # This runs during FOD where network is available for Go dependencies
+      python -m venv /tmp/build-venv
+      source /tmp/build-venv/bin/activate
+      pip install --upgrade pip setuptools wheel setuptools-scm setuptools-golang build
+
+      # Set version for setuptools-scm
+      export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_KARAPACE="${version}"
+
+      # Build wheel (this will compile the Go extension)
+      python -m build --wheel --outdir $out
+
+      # Fix the wheel to strip store references from compiled .so files
+      cd $out
+      WHEEL_FILE=$(ls karapace-*.whl)
+      mkdir -p /tmp/wheel-fix
+      cd /tmp/wheel-fix
+      unzip -q $out/$WHEEL_FILE
+
+      # Strip references from the Go extension library to make FOD pure
+      find . -name "*.so" -exec patchelf --shrink-rpath {} \; || true
+      find . -name "*.so" -exec patchelf --remove-rpath {} \; || true
+
+      # Repack the wheel (zip all contents, not just karapace-* pattern)
+      rm $out/$WHEEL_FILE
+      zip -qr $out/$WHEEL_FILE .
+      cd $out
+      rm -rf /tmp/wheel-fix
+
+      deactivate
     '';
 
     installPhase = "true";
@@ -120,7 +158,7 @@ let
     outputHashMode = "recursive";
     outputHashAlgo = "sha256";
     # Platform-specific hashes (pip downloads different wheels per platform)
-    outputHash = "sha256-D8zQBLEUa/BxjHNnjFglY7HAQYsdjBkD15o3WE9kUjw=";
+    outputHash = "sha256-H2EkVdkT1EBwS7JPU8i88YvrPM/wAsNOCGWGI0WlUvE=";
   };
 
 in
@@ -132,13 +170,15 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [
     pythonPkg
-    go_1_23      # Required for protopace Go extension
-    rustc        # Required for some dependencies
-    cargo        # Required for some dependencies
+    go_1_23       # Required for protopace Go extension
+    rustc         # Required for some dependencies
+    cargo         # Required for some dependencies
+    makeWrapper   # Required to create wrapper scripts with LD_LIBRARY_PATH
   ];
 
   buildInputs = [
     pythonPkg
+    stdenv.cc.cc.lib  # Required for libstdc++.so.6 needed by ujson and other compiled packages
   ];
 
   buildPhase = ''
@@ -152,21 +192,6 @@ stdenv.mkDerivation {
     # Set version for setuptools-scm
     export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_KARAPACE="${version}"
 
-    # Set up Go environment to use vendored dependencies
-    export GOPATH=${pipCache}/go
-    export GOCACHE=$TMPDIR/go-build
-    export GOPROXY=off
-    export GOFLAGS="-mod=vendor"
-    export GOTOOLCHAIN=local  # Prevent downloading toolchains
-
-    # Copy vendored Go modules to the source tree
-    cp -r ${pipCache}/vendor go/protopace/
-
-    # Patch go.mod to remove toolchain requirement and use go 1.21
-    cd go/protopace
-    sed -i '/^toolchain/d' go.mod
-    cd -
-
     # Create virtualenv in $out
     ${pythonPkg}/bin/python -m venv $out
     source $out/bin/activate
@@ -175,24 +200,29 @@ stdenv.mkDerivation {
     echo ""
     echo "Installing Karapace from cached packages..."
     pip install --no-index --find-links ${pipCache} \
-      --upgrade pip setuptools wheel setuptools-scm setuptools-golang
+      --upgrade pip setuptools wheel
 
-    # Install Karapace from source directory using cached dependencies
+    # Install avro first from our patched version
     echo ""
-    echo "Installing Karapace..."
-    # First install avro from the sdist we created
+    echo "Installing avro from patched source..."
     pip install --no-index --find-links ${pipCache} avro
-    # Now install Karapace using the cached wheels
-    # We use PIP_NO_INDEX and provide find-links to use only our cache
-    pip install --no-index --find-links ${pipCache} --no-deps .
-    # Then install remaining dependencies
+
+    # Install all karapace dependencies from cache (without karapace itself yet)
+    echo ""
+    echo "Installing dependencies..."
     pip install --no-index --find-links ${pipCache} \
       accept-types aiohttp aiokafka async_lru cachetools confluent-kafka \
-      cryptography dependency-injector fastapi pydantic isodate jsonschema \
-      lz4 networkx opentelemetry-api opentelemetry-exporter-otlp opentelemetry-sdk \
-      protobuf prometheus-client pydantic-settings pyjwt python-dateutil \
-      python-snappy rich tenacity typing-extensions ujson watchfiles xxhash \
-      zstandard yarl
+      cryptography fastapi isodate jsonschema lz4 networkx protobuf \
+      pydantic pydantic-settings pyjwt python-dateutil python-snappy \
+      rich tenacity typing-extensions ujson watchfiles xxhash zstandard \
+      prometheus-client yarl opentelemetry-api opentelemetry-sdk \
+      opentelemetry-exporter-otlp dependency-injector \
+      uvicorn httpx jinja2 python-multipart email-validator
+
+    # Finally install karapace wheel with --no-deps since all deps are already installed
+    echo ""
+    echo "Installing Karapace wheel (without dependencies)..."
+    pip install --no-index --find-links ${pipCache} --no-deps karapace
 
     # Verify installation
     echo ""
@@ -207,6 +237,32 @@ stdenv.mkDerivation {
 
   installPhase = ''
     echo "Virtualenv created in $out"
+  '';
+
+  postFixup = ''
+    # The karapace and karapace_rest_proxy entry points are broken in 5.0.3
+    # They reference main() functions that don't exist - the modules need to be run with python -m
+    # Replace the broken scripts with proper wrappers
+
+    # Remove broken karapace script and create a proper wrapper
+    rm -f $out/bin/karapace
+    makeWrapper $out/bin/python $out/bin/karapace \
+      --add-flags "-m karapace" \
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ stdenv.cc.cc.lib ]}"
+
+    # Remove broken karapace_rest_proxy script and create a proper wrapper
+    rm -f $out/bin/karapace_rest_proxy
+    makeWrapper $out/bin/python $out/bin/karapace_rest_proxy \
+      --add-flags "-m karapace.kafka_rest_apis" \
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ stdenv.cc.cc.lib ]}"
+
+    # Wrap the other scripts that might work but need LD_LIBRARY_PATH
+    for prog in $out/bin/karapace_mkpasswd $out/bin/karapace_schema_backup; do
+      if [ -f "$prog" ]; then
+        wrapProgram $prog \
+          --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ stdenv.cc.cc.lib ]}"
+      fi
+    done
   '';
 
   dontStrip = true;
