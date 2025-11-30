@@ -58,6 +58,9 @@ let
       tar xzf $src --strip-components=1
     '';
 
+    # Don't run make - we're just extracting the source
+    dontBuild = true;
+
     installPhase = ''
       mkdir -p $out
       cp -r . $out/
