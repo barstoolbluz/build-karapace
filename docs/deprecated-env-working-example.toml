@@ -1,0 +1,773 @@
+# f lo x  manifest version managed by Flox CLI
+version = 1
+
+
+[install]
+pip.pkg-path = "python311Packages.pip"
+gum.pkg-path = "gum"
+confluent-kafka.pkg-path = "python311Packages.confluent-kafka"
+openpyxl.pkg-path = "python311Packages.openpyxl"
+gitFull.pkg-path = "gitFull"
+virtualenv.pkg-path = "python311Packages.virtualenv"
+go.pkg-path = "go"
+snappy.pkg-path = "snappy"
+openjdk.pkg-path = "openjdk"
+protobuf3_20.pkg-path = "protobuf3_20"
+glibc.pkg-path = "glibc"
+glibc.systems = ["aarch64-linux", "x86_64-linux"]
+sentry-sdk.pkg-path = "python311Packages.sentry-sdk"
+
+
+[vars]
+VIRTUAL_ENV_DISABLE_PROMPT="1"
+
+
+
+
+
+[hook]
+on-activate = '''
+# begins the beguine
+set -e
+
+# Load configuration management functions
+load_config_variables() {
+    # defines default paths; inject env vars at activation time to override
+    KARAPACE_DIR="${KARAPACE_DIR:-$FLOX_ENV_CACHE/karapace}"
+    VENV_DIR="${VENV_DIR:-$FLOX_ENV_CACHE/karapace_venv}"
+    PYTHON_SCRIPT="${PYTHON_SCRIPT:-$FLOX_ENV_CACHE/karapace_installer.py}"
+    HASH_FILE="${HASH_FILE:-$FLOX_ENV_CACHE/.karapace_installer_hash}"
+    INSTALL_FLAG="${INSTALL_FLAG:-$FLOX_ENV_CACHE/.karapace_installed}"
+
+    # sets default kafka konfiguration; inject env vars at activation time to override
+    KAFKA_HOST="${KAFKA_HOST:-localhost}"
+    KAFKA_PORT="${KAFKA_PORT:-9092}"
+    REGISTRY_HOST="${REGISTRY_HOST:-localhost}"
+    REGISTRY_PORT="${REGISTRY_PORT:-8081}"
+    REST_HOST="${REST_HOST:-127.0.0.1}"
+    REST_PORT="${REST_PORT:-8082}"
+    LOG_LEVEL="${LOG_LEVEL:-INFO}"
+    FORCE_INSTALL="${FORCE_INSTALL:-false}"
+    
+    # adds DEBUG flag, default is =false; set to =true OR pass DEBUG=true with flox activate -s
+    DEBUG="${DEBUG:-false}"
+    # keeps VERBOSE for backward compatibility
+    if [ "${DEBUG}" = "true" ]; then
+        VERBOSE="true"
+    else
+        VERBOSE="${VERBOSE:-false}"
+    fi
+    
+    # exports variables for use in other functions
+    export KARAPACE_DIR VENV_DIR PYTHON_SCRIPT HASH_FILE INSTALL_FLAG
+    export KAFKA_HOST KAFKA_PORT REGISTRY_HOST REGISTRY_PORT REST_HOST REST_PORT LOG_LEVEL
+    export DEBUG VERBOSE FORCE_INSTALL
+}
+
+# runs commands with / without redirecting output
+run_cmd() {
+    local cmd="$1"
+    local msg="$2"
+    local spinner_text="${3:-Processing...}"
+    
+    if [ "${DEBUG}" = "true" ]; then
+        echo "→ ${msg}"
+        eval "$cmd"
+        return $?
+    else
+        echo "→ ${spinner_text}"
+        cmd=$(echo "$cmd" | sed 's/"//g')
+        
+        gum spin --spinner dot --title "${spinner_text}" -- bash -c "${cmd}"
+        local exit_code=$?
+        
+        # checks for errors
+        if [ $exit_code -ne 0 ]; then
+            echo "$(gum style --foreground="#ff0000" "✗") ${msg} failed (exit code $exit_code)"
+        else
+            # checks for success
+            echo "$(gum style --foreground="#00ff00" "✓") ${msg} completed"
+        fi
+        
+        return $exit_code
+    fi
+}
+
+# calculates hash for file change detection
+calculate_hash() {
+    if command -v md5sum > /dev/null 2>&1; then
+        md5sum "$1" | awk '{print $1}'
+    elif command -v md5 > /dev/null 2>&1; then
+        # uses md5 on macOS instead of md5sum
+        md5 -q "$1"
+    else
+        # falls back if neither is available
+        echo "$(date +%s)"
+    fi
+}
+
+# creates configuration files with current settings
+create_config_files() {
+    local config_dir="$1"
+    
+    # creates karapace.config.json with default or custom env vars
+    cat > "${config_dir}/karapace.config.json" << EOL
+{
+    "bootstrap_uri": "${KAFKA_HOST}:${KAFKA_PORT}",
+    "client_id": "karapace",
+    "group_id": "karapace-registry",
+    "log_level": "${LOG_LEVEL}",
+    "log_handler": "stdout",
+    "host": "${REGISTRY_HOST}",
+    "port": ${REGISTRY_PORT},
+    "registry_host": "${REGISTRY_HOST}",
+    "registry_port": ${REGISTRY_PORT},
+    "advertised_hostname": "${REGISTRY_HOST}",
+    "advertised_port": ${REGISTRY_PORT},
+    "topic_name": "_schemas",
+    "metadata_max_age_ms": 60000,
+    "connections_max_idle_ms": 60000,
+    "master_eligibility": true,
+    "karapace_rest": true,
+    "karapace_registry": true,
+    "compatibility": "FULL",
+    "replication_factor": 1,
+    "security_protocol": "PLAINTEXT",
+    "session_timeout_ms": 10000,
+    "protobuf_runtime_directory": "runtime"
+}
+EOL
+
+    echo "$(gum style --foreground="#00ff00" "✓") Created Schema Registry config: ${config_dir}/karapace.config.json"
+    echo "  $(gum style --foreground 250 "Kafka: ${KAFKA_HOST}:${KAFKA_PORT}")"
+    echo "  $(gum style --foreground 250 "Registry: ${REGISTRY_HOST}:${REGISTRY_PORT}")"
+
+    # creates rest proxy config file with default or custom env vars
+    cat > "${config_dir}/rest-proxy-karapace.config.json" << EOL
+{
+    "host": "${REST_HOST}",
+    "port": ${REST_PORT},
+    "advertised_hostname": "${REGISTRY_HOST}",
+    "log_level": "${LOG_LEVEL}",
+    "kafka_bootstrap_servers": "${KAFKA_HOST}:${KAFKA_PORT}",
+    "karapace_rest": true
+}
+EOL
+
+    echo "$(gum style --foreground="#00ff00" "✓") Created REST Proxy config: ${config_dir}/rest-proxy-karapace.config.json"
+    echo "  $(gum style --foreground 250 "REST Proxy: ${REST_HOST}:${REST_PORT}")"
+}
+
+# creates installer script
+create_installer_script() {
+    local script_path="$1"
+    
+    cat > "${script_path}" << 'EOL'
+#!/usr/bin/env python3
+"""
+Karapace Installation With Go Support
+
+This script handles installation by:
+1. Examining the repository structure
+2. Installing from a specific version tag
+3. Properly building with Go components
+"""
+import os
+import sys
+import subprocess
+import json
+import time
+
+flox_env_cache = os.environ.get('FLOX_ENV_CACHE', '.')
+debug_mode = os.environ.get('DEBUG', 'false').lower() == 'true'
+
+def examine_repository():
+    """Examine the Karapace repository structure."""
+    print("Examining repository structure...")
+    
+    karapace_dir = os.path.join(flox_env_cache, "karapace")
+    
+    if not os.path.exists(karapace_dir):
+        os.makedirs(karapace_dir)
+    
+    os.chdir(karapace_dir)
+    
+    # clones or updates repo
+    if os.path.exists("karapace"):
+        print("Repository already exists, updating...")
+        os.chdir("karapace")
+        
+        # checks: are we in a detached HEAD state?
+        head_status = subprocess.run(["git", "status"], capture_output=True, text=True)
+        if "HEAD detached at" in head_status.stdout:
+            # tries to check out main/master branch first
+            try:
+                subprocess.run(["git", "checkout", "main"], check=True)
+            except subprocess.CalledProcessError:
+                try:
+                    subprocess.run(["git", "checkout", "master"], check=True)
+                except subprocess.CalledProcessError:
+                    print("Warning: Unable to checkout main branch, using current detached state")
+        
+        # tries to pull
+        try:
+            subprocess.run(["git", "pull"], check=True)
+        except subprocess.CalledProcessError:
+            print("Warning: Git pull failed, using existing repository state")
+    else:
+        print("Cloning repository...")
+        subprocess.run(["git", "clone", "https://github.com/Aiven-Open/karapace.git"], check=True)
+        os.chdir("karapace")
+    
+    # lists available tags
+    print("\nAvailable version tags:")
+    result = subprocess.run(
+        ["git", "tag", "-l"], 
+        capture_output=True, 
+        text=True, 
+        check=True
+    )
+    tags = result.stdout.strip().split("\n")
+    
+    # finds stable versions
+    stable_tags = [tag for tag in tags if "dev" not in tag and "rc" not in tag and "a" not in tag and "b" not in tag]
+    
+    if stable_tags:
+        stable_tags.sort(key=lambda x: [int(y) if y.isdigit() else y for y in x.split('.')])
+        latest_stable = stable_tags[-1]
+        print(f"Latest stable version: {latest_stable}")
+        
+        # checks out the latest stable version
+        print(f"Checking out version {latest_stable}...")
+        subprocess.run(["git", "checkout", latest_stable], check=True)
+    else:
+        print("No stable versions found, using latest commit")
+    
+    # examines structure
+    print("\nRepository structure:")
+    result = subprocess.run(["find", ".", "-type", "f", "-name", "*.go"], capture_output=True, text=True, check=True)
+    go_files = result.stdout.strip().split("\n")
+    print(f"Go files found: {len(go_files)}")
+    for go_file in go_files[:5]:  # Show just the first few
+        print(f"  {go_file}")
+    if len(go_files) > 5:
+        print(f"  ... and {len(go_files) - 5} more")
+    
+    # looks for setup.py
+    if os.path.exists("setup.py"):
+        print("\nsetup.py found")
+    else:
+        print("\nsetup.py not found")
+    
+    if os.path.exists("pyproject.toml"):
+        print("pyproject.toml found")
+    else:
+        print("pyproject.toml not found")
+    
+    # returns to FLOX_ENV_CACHE
+    os.chdir(flox_env_cache)
+    
+    return go_files, stable_tags[-1] if stable_tags else None
+
+def check_go_installation():
+    """Check if Go is installed and install it if not."""
+    print("\nChecking Go installation...")
+    try:
+        result = subprocess.run(["go", "version"], capture_output=True, text=True)
+        if result.returncode == 0:
+            print(f"Go is installed: {result.stdout.strip()}")
+            return True
+    except FileNotFoundError:
+        print("Go is not installed.")
+    
+    # tries to install golang stuff via pip
+    try:
+        print("Attempting to install Go dependencies...")
+        subprocess.run([
+            sys.executable, "-m", "pip", "install", "setuptools-golang"
+        ], check=True)
+        return True
+    except subprocess.CalledProcessError:
+        print("Failed to install Go dependencies via pip.")
+        return False
+
+def install_from_source():
+    """Install Karapace using pip from source with Go support."""
+    print("\nAttempting installation using pip with Go support...")
+    
+    go_installed = check_go_installation()
+    if not go_installed:
+        print("WARNING: Go is not installed. Installation might fail.")
+    
+    karapace_repo_dir = os.path.join(flox_env_cache, "karapace", "karapace")
+    os.chdir(karapace_repo_dir)
+    
+    try:
+        subprocess.run([
+            sys.executable, "-m", "pip", "install",
+            "wheel",  # Ensure wheel is installed
+            "setuptools-golang",  # Ensure Go support is installed
+        ], check=True)
+        
+        print("Installing with Go support...")
+        try:
+            subprocess.run([
+                sys.executable, "-m", "pip", "install",
+                "-e", "."
+            ], check=False)  # Don't check result as we expect it might fail
+        except subprocess.CalledProcessError:
+            print("Installation completed with warnings - checking if it worked...")
+        
+        # checks if karapace was installed successfully
+        try:
+            # tries checking for module
+            try:
+                result = subprocess.run(
+                    [sys.executable, "-m", "karapace", "--version"],
+                    capture_output=True,
+                    text=True
+                )
+                if result.returncode == 0:
+                    print("✓ Karapace installed successfully!")
+                    return True
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                pass
+                
+            # tries checking for binary
+            venv_dir = os.environ.get('VENV_DIR', os.path.join(flox_env_cache, "karapace_venv"))
+            bin_path = os.path.join(venv_dir, "bin", "karapace")
+            
+            if os.path.exists(bin_path):
+                print("✓ Karapace binary found!")
+                return True
+            else:
+                print("✗ Karapace installation verification failed - no binary found")
+        except Exception as e:
+            print(f"✗ Verification error: {str(e)}")
+    except subprocess.CalledProcessError as e:
+        print(f"✗ Installation failed: {e}")
+    
+    os.chdir(flox_env_cache)
+    return False
+
+def build_wheel():
+    """Build a binary distribution package (wheel) with Go support."""
+    print("\nAttempting to build a binary package with Go support...")
+    
+    karapace_repo_dir = os.path.join(flox_env_cache, "karapace", "karapace")
+    os.chdir(karapace_repo_dir)
+    
+    # is / is not golang supported?
+    if os.path.exists("pyproject.toml"):
+        print("Checking pyproject.toml...")
+        with open("pyproject.toml", "r") as f:
+            content = f.read()
+        
+        if "# setuptools-golang" in content:
+            print("Fixing pyproject.toml to enable Go support...")
+            temp_file = "pyproject.toml.tmp"
+            with open(temp_file, "w") as f:
+                # uncomments golang dependencies if commented out
+                modified_content = content.replace(
+                    "# setuptools-golang", 
+                    "setuptools-golang"
+                )
+                f.write(modified_content)
+            
+            # backs up original pyproject.toml
+            os.rename("pyproject.toml", "pyproject.toml.bak")
+            os.rename(temp_file, "pyproject.toml")
+    
+    # reinvents the wheel
+    try:
+        print("Building wheel with Go support...")
+        
+        subprocess.run([
+            sys.executable, "setup.py", "bdist_wheel"
+        ], check=False)
+        
+        # checks if wheel was reinvented
+        wheel_files = []
+        if os.path.exists("dist"):
+            wheel_files = [f for f in os.listdir("dist") if f.endswith(".whl")]
+        
+        if wheel_files:
+            print(f"✓ Wheel created: {wheel_files[0]}")
+            
+            # installs the wheel
+            print("Installing wheel...")
+            subprocess.run([
+                sys.executable, "-m", "pip", "install", 
+                f"dist/{wheel_files[0]}"
+            ], check=True)
+            
+            return True
+        else:
+            print("✗ No wheel created")
+    except subprocess.CalledProcessError as e:
+        print(f"✗ Build failed: {e}")
+    
+    # restores original pyproject.toml if modified
+    if os.path.exists("pyproject.toml.bak"):
+        os.rename("pyproject.toml.bak", "pyproject.toml")
+    
+    os.chdir(flox_env_cache)
+    return False
+
+def install_specific_version():
+    """Try to install a specific version from PyPI."""
+    print("\nAttempting to install from PyPI...")
+    
+    # lists versions to try, starting with stable ones
+    versions = ["3.0.0", "2.0.0", "1.0.0"]
+    
+    for version in versions:
+        print(f"Trying to install version {version}...")
+        try:
+            subprocess.run([
+                sys.executable, "-m", "pip", "install",
+                f"karapace=={version}"
+            ], check=True)
+            
+            # verifies installation
+            try:
+                result = subprocess.run(
+                    [sys.executable, "-m", "karapace", "--version"],
+                    capture_output=True,
+                    text=True
+                )
+                if result.returncode == 0:
+                    print(f"✓ Karapace version {version} installed successfully!")
+                    return True
+                else:
+                    print(f"✗ Karapace version {version} installation verification failed")
+                    
+                    subprocess.run([
+                        sys.executable, "-m", "pip", "uninstall",
+                        "-y", "karapace"
+                    ], check=False)
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                print(f"✗ Karapace version {version} installation verification failed")
+                subprocess.run([
+                    sys.executable, "-m", "pip", "uninstall",
+                    "-y", "karapace"
+                ], check=False)
+        except subprocess.CalledProcessError:
+            print(f"✗ Failed to install version {version}")
+    
+    return False
+
+def main():
+    """Main execution function."""
+    print("=" * 80)
+    print("Karapace Installation With Go Support")
+    print("=" * 80)
+    
+    # skips checking for existing install if FORCE_INSTALL=true
+    force_install = os.environ.get('FORCE_INSTALL', 'false').lower() == 'true'
+    
+    if force_install:
+        print("Force install flag is set - proceeding with installation")
+        installed = False
+    else:
+        # checks if karapace is already installed
+        try:
+            # tries module first
+            try:
+                result = subprocess.run(
+                    [sys.executable, "-m", "karapace", "--version"],
+                    capture_output=True,
+                    text=True,
+                    check=True
+                )
+                installed = True
+                print(f"✓ Karapace module is already installed: {result.stdout.strip()}")
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                # tries binary if module fails
+                venv_dir = os.environ.get('VENV_DIR', os.path.join(flox_env_cache, "karapace_venv"))
+                bin_path = os.path.join(venv_dir, "bin", "karapace")
+                
+                if os.path.exists(bin_path):
+                    try:
+                        result = subprocess.run(
+                            [bin_path, "--version"],
+                            capture_output=True,
+                            text=True,
+                            check=True
+                        )
+                        installed = True
+                        print(f"✓ Karapace binary is already installed: {result.stdout.strip()}")
+                    except (subprocess.CalledProcessError, FileNotFoundError):
+                        installed = False
+                else:
+                    installed = False
+        except Exception as e:
+            print(f"Error checking installation: {str(e)}")
+            installed = False
+    
+    if not installed:
+        go_files, latest_stable = examine_repository()
+        
+        check_go_installation()
+        
+        # tries different installation methods in order
+        # tries installing from pypi first
+        installed = install_specific_version()
+        
+        # tries direct install if pypi fails
+        if not installed:
+            print("\nTrying source installation...")
+            installed = install_from_source()
+        
+        # tries reinventing wheel if direct installation fails
+        if not installed:
+            print("\nTrying to build wheel...")
+            installed = build_wheel()
+    else:
+        print("Skipping installation steps and just ensuring config files exist...")
+    
+    # gets venv path
+    venv_dir = os.environ.get('VENV_DIR', os.path.join(flox_env_cache, "karapace_venv"))
+    
+    print("\n" + "=" * 80)
+    if installed:
+        print("Karapace installation completed successfully!")
+        print("\nService Management:")
+        print("  Schema Registry:")
+        print("    Start: flox services start schema-registry")
+        print("    Logs: flox services logs schema-registry")
+        print("\n  REST Proxy:")
+        print("    Start: flox services start rest-proxy")
+        print("    Logs: flox services logs rest-proxy")
+        print("\nNote:")
+        print("  Services start automatically with flox activate -s")
+        print("  Check service status: flox services status")
+        print("\nConfiguration:")
+        kafka_host = os.environ.get('KAFKA_HOST', 'localhost')
+        kafka_port = os.environ.get('KAFKA_PORT', '9092')
+        registry_host = os.environ.get('REGISTRY_HOST', 'localhost')
+        registry_port = os.environ.get('REGISTRY_PORT', '8081')
+        rest_host = os.environ.get('REST_HOST', '127.0.0.1')
+        rest_port = os.environ.get('REST_PORT', '8082')
+        print(f"  Kafka: {kafka_host}:{kafka_port}")
+        print(f"  Schema Registry: {registry_host}:{registry_port}")
+        print(f"  REST Proxy: {rest_host}:{rest_port}")
+    else:
+        print("Karapace installation was not successful.")
+        print("\nPossible alternatives:")
+        print("  1. Use a pre-built binary if available")
+        print("  2. Use a Docker image in a minimal configuration")
+        print("  3. Try a different version of Go or protobuf")
+    print("=" * 80)
+    
+    return installed
+
+if __name__ == "__main__":
+    success = main()
+    sys.exit(0 if success else 1)
+EOL
+
+    chmod +x "${script_path}"
+    echo "$(gum style --foreground="#00ff00" "✓") Created installer script: ${script_path}"
+}
+
+# sets up virtual environment
+setup_venv() {
+    local venv_dir="$1"
+    
+    if [ ! -d "$venv_dir" ]; then
+        echo "Creating virtual environment at $venv_dir"
+        if [ "${DEBUG}" = "true" ]; then
+            python3 -m venv "$venv_dir"
+        else
+            run_cmd "python3 -m venv $venv_dir" "Creating virtual environment" "Setting up Python environment"
+        fi
+    else
+        echo "Using existing virtual environment at $venv_dir"
+    fi
+}
+
+# runs Python installation
+run_python_installation() {
+    local venv_dir="$1"
+    local python_script="$2"
+    
+    export DEBUG="${DEBUG}"  # exports DEBUG to the Python script
+    
+    if [ "${DEBUG}" = "true" ]; then
+        "$venv_dir/bin/python" -m pip install --upgrade pip
+        "$venv_dir/bin/python" -m pip install setuptools wheel setuptools-golang
+        "$venv_dir/bin/python" "$python_script"
+    else
+        run_cmd "$venv_dir/bin/python -m pip install --upgrade pip" "Upgrading pip" "Upgrading pip"
+        run_cmd "$venv_dir/bin/python -m pip install setuptools wheel setuptools-golang" "Installing dependencies" "Installing Python dependencies"
+        run_cmd "$venv_dir/bin/python $python_script" "Running Karapace installer" "Installing Karapace"
+    fi
+    
+    return $?
+}
+
+# displays installation header
+display_setup_header() {
+    gum style \
+        --border rounded \
+        --border-foreground 240 \
+        --padding "1 2" \
+        --margin "1 0" \
+        --width 70 \
+        "$(gum style --foreground 27 --bold 'Karapace Setup')
+
+$(gum style --foreground 250 "  Kafka: ${KAFKA_HOST}:${KAFKA_PORT}")
+$(gum style --foreground 250 "  Registry: ${REGISTRY_HOST}:${REGISTRY_PORT}")
+$(gum style --foreground 250 "  REST Proxy: ${REST_HOST}:${REST_PORT}")"
+}
+
+# displays installation complete message
+display_setup_complete() {
+    echo "==========================================================="
+    echo "$(gum style --foreground 27 --bold 'Karapace setup complete!')"
+    echo ""
+    echo "$(gum style --foreground 39 'Configuration:')"
+    echo "  $(gum style --foreground 250 "Kafka: $KAFKA_HOST:$KAFKA_PORT")"
+    echo "  $(gum style --foreground 250 "Schema Registry: $REGISTRY_HOST:$REGISTRY_PORT")"
+    echo "  $(gum style --foreground 250 "REST Proxy: $REST_HOST:$REST_PORT")"
+    echo ""
+    echo "==========================================================="
+}
+
+# checks if installation exists and is complete
+check_existing_installation() {
+    if [ -f "$INSTALL_FLAG" ] && [ "$FORCE_INSTALL" != "true" ]; then
+        # checks is karapace accessible via the venv?
+        if [ -d "$VENV_DIR" ] && [ -f "$VENV_DIR/bin/karapace" ]; then
+            return 0  # Installation exists and is complete
+        else
+            return 1  # Installation flag exists but install is incomplete
+        fi
+    else
+        return 1  # No installation or force install is set
+    fi
+}
+
+# handles existing installation
+update_existing_installation() {
+    gum style \
+        --border rounded \
+        --border-foreground 240 \
+        --padding "1 2" \
+        --margin "1 0" \
+        --width 70 \
+        "$(gum style --foreground 40 --bold 'Karapace is already installed and configured.')
+
+$(gum style --foreground 250 'Updating configuration files with current environment variables...')"
+    
+    # updates configurations with current environment variables
+    create_config_files "$FLOX_ENV_CACHE"
+    
+    echo "$(gum style --foreground 229 "To force complete reinstall, run with \`FORCE_INSTALL=true flox activate [-s]\`")"
+}
+
+# runs the full installation process
+run_installation() {
+    clear
+    display_setup_header
+    
+    # changes to cache directory
+    cd "$FLOX_ENV_CACHE"
+    
+    # creates configuration files
+    create_config_files "$FLOX_ENV_CACHE"
+    
+    # creates the installer script
+    create_installer_script "$PYTHON_SCRIPT"
+    
+    # calculates and stores script hash for idempotency
+    if [ ! -f "$HASH_FILE" ]; then
+        calculate_hash "$PYTHON_SCRIPT" > "$HASH_FILE"
+    fi
+    
+    # sets up virtual environment
+    setup_venv "$VENV_DIR"
+    
+    # runs the Python installer
+    run_python_installation "$VENV_DIR" "$PYTHON_SCRIPT"
+    RESULT=$?
+    
+    # displays completion message
+    display_setup_complete
+    
+    # creates installation flag file for idempotency
+    touch "$INSTALL_FLAG"
+    
+    return $RESULT
+}
+
+# displays installation status message
+display_installation_status() {
+    local force_flag="$1"
+    
+    if [ "$force_flag" = "true" ]; then
+        gum style \
+            --border rounded \
+            --border-foreground 240 \
+            --padding "1 2" \
+            --margin "1 0" \
+            --width 70 \
+            "$(gum style --foreground 214 --bold 'Forcing reinstallation of Karapace...')"
+    else
+        gum style \
+            --border rounded \
+            --border-foreground 240 \
+            --padding "1 2" \
+            --margin "1 0" \
+            --width 70 \
+            "$(gum style --foreground 214 --bold 'First-time installation of Karapace...')"
+    fi
+}
+
+# main function to orchestrate the installation process
+main() {
+    # loads configuration variables
+    load_config_variables
+    
+    # checks for existing installation
+    if check_existing_installation; then
+        update_existing_installation
+    else
+        # displays installation status
+        display_installation_status "$FORCE_INSTALL"
+        
+        # runs full installation
+        run_installation
+    fi
+    
+    # adds venv to PATH
+    export PATH="$VENV_DIR/bin:$PATH"
+    
+    # returns to project directory
+    cd $FLOX_ENV_PROJECT
+}
+
+# executes main function
+main
+'''
+
+[profile]
+common = '''
+'''
+
+[services]
+schema-registry.command = 'karapace $FLOX_ENV_CACHE/karapace.config.json'
+rest-proxy.command = 'karapace $FLOX_ENV_CACHE/rest-proxy-karapace.config.json'
+
+
+[options]
+systems = [
+  "aarch64-darwin",
+  "aarch64-linux",
+  "x86_64-darwin",
+  "x86_64-linux",
+]
+# Uncomment to disable CUDA detection.
+# cuda-detection = false
+
