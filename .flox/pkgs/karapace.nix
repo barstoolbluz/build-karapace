@@ -13,6 +13,7 @@
 , gnutar
 , gzip
 , coreutils
+, zlib
 }:
 
 let
@@ -187,6 +188,7 @@ stdenv.mkDerivation {
   buildInputs = [
     pythonPkg
     stdenv.cc.cc.lib  # Required for libstdc++.so.6 needed by ujson and other compiled packages
+    zlib              # Required for zlib.h needed by aiokafka C extension
   ];
 
   buildPhase = ''
