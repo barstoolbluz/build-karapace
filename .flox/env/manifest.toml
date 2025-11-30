@@ -47,10 +47,10 @@ echo ""
 echo "Build Karapace - Apache Kafka Schema Registry & REST Proxy"
 echo ""
 echo "Karapace 5.0.3 (Latest)"
-echo "  flox build karapace-5-0-3  - Full installation (Registry + REST Proxy)"
+echo "  flox build karapace  - Full installation (Registry + REST Proxy)"
 echo ""
 echo "After building:"
-echo "  source result-karapace-5-0-3/bin/activate"
+echo "  source result-karapace/bin/activate"
 echo "  karapace --help"
 echo ""
 echo "================================================================================"
@@ -99,7 +99,7 @@ echo "==========================================================================
 ## ------------------------------------------------------------------
 [build]
 # Nix expressions in .flox/pkgs/ automatically available:
-#   karapace-5-0-3.nix
+#   karapace.nix (version 5.0.3)
 
 
 ## Other Environment Options -----------------------------------------

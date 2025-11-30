@@ -33,16 +33,16 @@ cd build-karapace
 flox activate
 
 # Build Karapace 5.0.3
-flox build karapace-5-0-3
+flox build karapace
 
 # Use the built package
-./result-karapace-5-0-3/bin/karapace --version
-source result-karapace-5-0-3/bin/activate
+./result-karapace/bin/karapace --version
+source result-karapace/bin/activate
 karapace --help
 ```
 
 **Available builds:**
-- `karapace-5-0-3` - Full Karapace installation (Schema Registry + REST Proxy)
+- `karapace` - Full Karapace installation (Schema Registry + REST Proxy) version 5.0.3
 
 ### Option 2: Nix Expression (Planned)
 
@@ -73,8 +73,8 @@ This approach:
 
 ```bash
 flox activate
-flox build karapace-5-0-3
-source result-karapace-5-0-3/bin/activate
+flox build karapace
+source result-karapace/bin/activate
 
 # Start Schema Registry
 karapace karapace.config.json
@@ -95,7 +95,7 @@ environments = [
 
 [hook]
 on-activate = '''
-  source /path/to/result-karapace-5-0-3/bin/activate
+  source /path/to/result-karapace/bin/activate
   export KARAPACE_BOOTSTRAP_URI="kafka:9092"
 '''
 
@@ -129,7 +129,7 @@ Python dependencies from PyPI are cached in a Fixed-Output Derivation (FOD) but 
 
 Example workflow for releasing 5.0.4:
 1. Branch current `main` to `karapace-5.0.3`
-2. On `main`: Add new tarballs to `vendor/`, create `karapace-5-0-4.nix`
+2. On `main`: Add new tarballs to `vendor/`, update version in `karapace.nix` to `5.0.4`
 3. Users can build 5.0.4 from `main` or 5.0.3 from the `karapace-5.0.3` branch
 
 ## Configuration
