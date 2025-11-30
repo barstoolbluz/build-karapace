@@ -165,7 +165,7 @@ let
       else if stdenv.system == "x86_64-darwin" then
         "sha256-Aig6rmbcXpExK0Pl2a/meVVWMBG8TGFpZbGJzmzTTs4="
       else if stdenv.system == "aarch64-linux" then
-        lib.fakeHash  # TODO: Update with actual hash when building on this platform
+        "sha256-Ian0QZ1AlbJ4A2/7QGv3CXc37VPVtpoye3i6N6eZ+Cg="
       else
         throw "Unsupported system: ${stdenv.system}";
   };
