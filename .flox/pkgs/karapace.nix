@@ -12,6 +12,7 @@
 , makeWrapper
 , gnutar
 , gzip
+, coreutils
 }:
 
 let
@@ -53,7 +54,7 @@ let
     name = "karapace-${version}-source";
     system = stdenv.system;
     builder = "${stdenv.shell}";
-    PATH = "${lib.makeBinPath [ gnutar gzip ]}";
+    PATH = "${lib.makeBinPath [ coreutils gnutar gzip ]}";
     args = [
       "-c"
       ''
