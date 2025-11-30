@@ -28,7 +28,9 @@
         "pkg-path": "python311Packages.wheel"
       }
     },
-    "hook": {},
+    "hook": {
+      "on-activate": "echo \"================================================================================\"\necho \"Karapace Build Environment\"\necho \"================================================================================\"\necho \"\"\necho \"Build Karapace - Apache Kafka Schema Registry & REST Proxy\"\necho \"\"\necho \"Karapace 5.0.3 (Latest)\"\necho \"  flox build karapace-5-0-3  - Full installation (Registry + REST Proxy)\"\necho \"\"\necho \"After building:\"\necho \"  source result-karapace-5-0-3/bin/activate\"\necho \"  karapace --help\"\necho \"\"\necho \"================================================================================\"\n"
+    },
     "profile": {},
     "options": {}
   },

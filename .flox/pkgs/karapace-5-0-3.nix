@@ -101,6 +101,18 @@ let
       # Download all Karapace dependencies from pyproject.toml
       # This downloads wheels and source distributions for all dependencies
       pip download . --dest $out
+
+      # Download Go dependencies for the protopace extension
+      echo "Downloading Go dependencies for protopace..."
+      cd go/protopace
+      export GOPATH=/tmp/gopath
+      export GOCACHE=/tmp/go-build
+      mkdir -p /tmp/gopath /tmp/go-build
+      go mod download
+      go mod vendor
+      # Copy vendor directory to output
+      cp -r vendor $out/vendor
+      cd -
     '';
 
     installPhase = "true";
@@ -108,7 +120,7 @@ let
     outputHashMode = "recursive";
     outputHashAlgo = "sha256";
     # Platform-specific hashes (pip downloads different wheels per platform)
-    outputHash = "sha256-eGtJKihSALtu8J/GBnsQZkbapwTPCk2yacmWP8PPuB0=";
+    outputHash = "sha256-D8zQBLEUa/BxjHNnjFglY7HAQYsdjBkD15o3WE9kUjw=";
   };
 
 in
@@ -140,8 +152,20 @@ stdenv.mkDerivation {
     # Set version for setuptools-scm
     export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_KARAPACE="${version}"
 
-    # Disable Go proxy to prevent network access during build
+    # Set up Go environment to use vendored dependencies
+    export GOPATH=${pipCache}/go
+    export GOCACHE=$TMPDIR/go-build
     export GOPROXY=off
+    export GOFLAGS="-mod=vendor"
+    export GOTOOLCHAIN=local  # Prevent downloading toolchains
+
+    # Copy vendored Go modules to the source tree
+    cp -r ${pipCache}/vendor go/protopace/
+
+    # Patch go.mod to remove toolchain requirement and use go 1.21
+    cd go/protopace
+    sed -i '/^toolchain/d' go.mod
+    cd -
 
     # Create virtualenv in $out
     ${pythonPkg}/bin/python -m venv $out
