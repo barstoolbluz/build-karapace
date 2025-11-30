@@ -155,16 +155,16 @@ let
     outputHashMode = "recursive";
     outputHashAlgo = "sha256";
     # Platform-specific hashes (pip downloads different wheels per platform)
-    # NOTE: Hash updated after adding Cython to build dependencies
+    # NOTE: Hashes include Cython (required for building aiokafka from source)
     outputHash =
       if stdenv.system == "x86_64-linux" then
-        "sha256-H2EkVdkT1EBwS7JPU8i88YvrPM/wAsNOCGWGI0WlUvE="  # May need update after adding Cython
+        "sha256-H2EkVdkT1EBwS7JPU8i88YvrPM/wAsNOCGWGI0WlUvE="  # May need update - built before Cython was added
       else if stdenv.system == "aarch64-darwin" then
-        lib.fakeHash  # Will be updated with actual hash from build error
+        "sha256-A5G45CyDa6T/vFs7pNzuAeAQO0jvA78U15Dgkbvy4P4="
       else if stdenv.system == "x86_64-darwin" then
-        lib.fakeHash  # TODO: Update with actual hash
+        lib.fakeHash  # TODO: Update with actual hash when building on this platform
       else if stdenv.system == "aarch64-linux" then
-        lib.fakeHash  # TODO: Update with actual hash
+        lib.fakeHash  # TODO: Update with actual hash when building on this platform
       else
         throw "Unsupported system: ${stdenv.system}";
   };
