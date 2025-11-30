@@ -163,7 +163,7 @@ let
       else if stdenv.system == "aarch64-darwin" then
         "sha256-A5G45CyDa6T/vFs7pNzuAeAQO0jvA78U15Dgkbvy4P4="
       else if stdenv.system == "x86_64-darwin" then
-        lib.fakeHash  # TODO: Update with actual hash when building on this platform
+        "sha256-Aig6rmbcXpExK0Pl2a/meVVWMBG8TGFpZbGJzmzTTs4="
       else if stdenv.system == "aarch64-linux" then
         lib.fakeHash  # TODO: Update with actual hash when building on this platform
       else
