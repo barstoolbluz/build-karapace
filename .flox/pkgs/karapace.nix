@@ -155,7 +155,17 @@ let
     outputHashMode = "recursive";
     outputHashAlgo = "sha256";
     # Platform-specific hashes (pip downloads different wheels per platform)
-    outputHash = "sha256-H2EkVdkT1EBwS7JPU8i88YvrPM/wAsNOCGWGI0WlUvE=";
+    outputHash =
+      if stdenv.system == "x86_64-linux" then
+        "sha256-H2EkVdkT1EBwS7JPU8i88YvrPM/wAsNOCGWGI0WlUvE="
+      else if stdenv.system == "aarch64-darwin" then
+        "sha256-Qf2CuqIXHjNQ1nnLSVMoyyorvcTaJIDfWrErvakE8z8="
+      else if stdenv.system == "x86_64-darwin" then
+        "sha256-0000000000000000000000000000000000000000000="  # TODO: Update with actual hash
+      else if stdenv.system == "aarch64-linux" then
+        "sha256-0000000000000000000000000000000000000000000="  # TODO: Update with actual hash
+      else
+        throw "Unsupported system: ${stdenv.system}";
   };
 
 in
