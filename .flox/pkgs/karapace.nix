@@ -10,6 +10,8 @@
 , zip
 , patchelf
 , makeWrapper
+, gnutar
+, gzip
 }:
 
 let
@@ -45,30 +47,21 @@ let
   # Vendored source tarballs (relative to this .nix file in .flox/pkgs/)
   vendorDir = ../../vendor;
 
-  # Fetch Karapace source from vendored tarball
-  karapaceSrc = stdenv.mkDerivation {
+  # Extract Karapace source from vendored tarball
+  # Using a minimal FOD to avoid store references that mkDerivation can introduce
+  karapaceSrc = builtins.derivation {
     name = "karapace-${version}-source";
-
-    # Use vendored tarball instead of downloading from GitHub
-    src = "${vendorDir}/karapace-${version}.tar.gz";
-
-    sourceRoot = ".";
-
-    unpackPhase = ''
-      tar xzf $src --strip-components=1
-    '';
-
-    # Don't run make - we're just extracting the source
-    dontBuild = true;
-
-    installPhase = ''
-      mkdir -p $out
-      cp -r . $out/
-    '';
-
-    dontPatchShebangs = true;
-    dontStrip = true;
-    dontPatchELF = true;
+    system = stdenv.system;
+    builder = "${stdenv.shell}";
+    PATH = "${lib.makeBinPath [ gnutar gzip ]}";
+    args = [
+      "-c"
+      ''
+        mkdir -p $out
+        cd $out
+        tar xzf ${vendorDir}/karapace-${version}.tar.gz --strip-components=1
+      ''
+    ];
 
     outputHashMode = "recursive";
     outputHashAlgo = "sha256";
